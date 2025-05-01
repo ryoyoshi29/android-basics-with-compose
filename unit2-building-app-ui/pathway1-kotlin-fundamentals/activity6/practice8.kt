@@ -13,4 +13,8 @@ fun auctionPrice(bid: Bid?, minimumPrice: Int): Int {
         return bid.amount
     }
     return minimumPrice
+
+    /* 別解答
+    return bid?.amount ?: minimumPrice
+     */
 }
