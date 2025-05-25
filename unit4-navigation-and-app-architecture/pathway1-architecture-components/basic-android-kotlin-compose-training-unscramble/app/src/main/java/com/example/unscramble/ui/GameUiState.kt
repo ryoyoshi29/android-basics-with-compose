@@ -1,4 +1,6 @@
 package com.example.unscramble.ui
 
-class GameUiState {
-}
+data class GameUiState (
+    val currentScrambledWord: String = "",
+    val isGuessedWordWrong: Boolean = false
+)
