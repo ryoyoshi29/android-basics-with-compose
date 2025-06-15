@@ -16,7 +16,7 @@ sealed interface AmphibiansUiState {
 }
 
 class AmphibiansViewModel: ViewModel() {
-    var amphibiansUiState: AmphibiansUiState by mutableStateOf(AmphibiansUiState.Loading)
+    var amphibiansUiState: AmphibiansUiState by mutableStateOf(AmphibiansUiState.Success(getAmphibians()))
         private set
 
     init {
