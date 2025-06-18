@@ -1,5 +1,8 @@
 package com.example.amphibians.network
 
-AmphibiansApiService {
+import retrofit2.http.GET
 
+interface AmphibiansApiService {
+    @GET("Amphibians")
+    fun getAmphibians(): List<Amphibian>
 }
