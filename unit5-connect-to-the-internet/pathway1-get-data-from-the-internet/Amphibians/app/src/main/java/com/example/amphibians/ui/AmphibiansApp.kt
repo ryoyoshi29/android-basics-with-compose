@@ -26,7 +26,7 @@ fun AmphibiansApp() {
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = { AmphibiansTopBar(scrollBehavior) }
     ) {
-        val amphibiansViewModel: AmphibiansViewModel = viewModel()
+        val amphibiansViewModel: AmphibiansViewModel = viewModel(factory = AmphibiansViewModel.Factory)
         HomeScreen(
             amphibiansViewModel.amphibiansUiState,
             modifier = Modifier,

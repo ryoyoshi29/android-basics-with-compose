@@ -5,9 +5,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.amphibians.AmphibiansApplication
+import com.example.amphibians.data.AmphibiansRepository
 import com.example.amphibians.network.Amphibian
+import kotlinx.coroutines.launch
+import okio.IOException
 
 sealed interface AmphibiansUiState {
     data class Success(val amphibian: List<Amphibian>): AmphibiansUiState
@@ -15,41 +21,30 @@ sealed interface AmphibiansUiState {
     object Error: AmphibiansUiState
 }
 
-class AmphibiansViewModel: ViewModel() {
-    var amphibiansUiState: AmphibiansUiState by mutableStateOf(AmphibiansUiState.Success(getAmphibians()))
+class AmphibiansViewModel(private val amphibiansRepository: AmphibiansRepository): ViewModel() {
+    var amphibiansUiState: AmphibiansUiState by mutableStateOf(AmphibiansUiState.Loading)
         private set
 
     init {
         getAmphibians()
     }
 
-    private fun getAmphibians(): List<Amphibian> {
-        // TODO Repositoryでデータを取得
-        return listOf(
-            Amphibian(
-                name = "Great Basin Spadefoot",
-                type = "Toad",
-                description = "This toad spends most of its life underground due to the arid desert conditions in which it lives. Spadefoot toads earn the name because of their hind legs which are wedged to aid in digging. They are typically grey, green, or brown with dark spots.",
-                imgSrc = "https://developer.android.com/codelabs/basic-android-kotlin-compose-amphibians-app/img/great-basin-spadefoot.png"
-            ),
-            Amphibian(
-                name = "Great Basin Spadefoot",
-                type = "Toad",
-                description = "This toad spends most of its life underground due to the arid desert conditions in which it lives. Spadefoot toads earn the name because of their hind legs which are wedged to aid in digging. They are typically grey, green, or brown with dark spots.",
-                imgSrc = "https://developer.android.com/codelabs/basic-android-kotlin-compose-amphibians-app/img/great-basin-spadefoot.png"
-            ),
-            Amphibian(
-                name = "Great Basin Spadefoot",
-                type = "Toad",
-                description = "This toad spends most of its life underground due to the arid desert conditions in which it lives. Spadefoot toads earn the name because of their hind legs which are wedged to aid in digging. They are typically grey, green, or brown with dark spots.",
-                imgSrc = "https://developer.android.com/codelabs/basic-android-kotlin-compose-amphibians-app/img/great-basin-spadefoot.png"
-            ),
-            Amphibian(
-                name = "Great Basin Spadefoot",
-                type = "Toad",
-                description = "This toad spends most of its life underground due to the arid desert conditions in which it lives. Spadefoot toads earn the name because of their hind legs which are wedged to aid in digging. They are typically grey, green, or brown with dark spots.",
-                imgSrc = "https://developer.android.com/codelabs/basic-android-kotlin-compose-amphibians-app/img/great-basin-spadefoot.png"
-            )
-        )
+    private fun getAmphibians() {
+        viewModelScope.launch {
+            amphibiansUiState = try {
+                AmphibiansUiState.Success(amphibiansRepository.getAmphibianPhotos())
+            } catch(e: IOException) {
+                AmphibiansUiState.Error
+            }
+        }
+    }
+
+    companion object {
+        val Factory: ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                val myRepository = (this[APPLICATION_KEY] as AmphibiansApplication).container.amphibiansRepository
+                AmphibiansViewModel(myRepository)
+            }
+        }
     }
 }
