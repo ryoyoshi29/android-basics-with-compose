@@ -35,6 +35,8 @@ class ItemEditViewModel(
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
+    private val itemId: Int = checkNotNull(savedStateHandle[ItemEditDestination.itemIdArg])
+
     init {
         viewModelScope.launch {
             itemUiState = itemsRepository.getItemStream(itemId)
@@ -59,8 +61,6 @@ class ItemEditViewModel(
             itemsRepository.updateItem(itemUiState.itemDetails.toItem())
         }
     }
-
-    private val itemId: Int = checkNotNull(savedStateHandle[ItemEditDestination.itemIdArg])
 
     private fun validateInput(uiState: ItemDetails = itemUiState.itemDetails): Boolean {
         return with(uiState) {
