@@ -1,19 +1,19 @@
-package com.example.bluromatic
+package com.example.bluromatic.workers
 
 import android.content.Context
 import android.graphics.BitmapFactory
-import android.net.Uri
 import android.util.Log
+import androidx.core.net.toUri
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.example.bluromatic.workers.blurBitmap
-import com.example.bluromatic.workers.makeStatusNotification
-import com.example.bluromatic.workers.writeBitmapToFile
+import androidx.work.workDataOf
+import com.example.bluromatic.DELAY_TIME_MILLIS
+import com.example.bluromatic.KEY_BLUR_LEVEL
+import com.example.bluromatic.KEY_IMAGE_URI
+import com.example.bluromatic.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
-import androidx.core.net.toUri
-import androidx.work.workDataOf
 
 private const val TAG = "BlurWorker"
 
@@ -31,11 +31,12 @@ class BlurWorker(ctx: Context, params: WorkerParameters): CoroutineWorker(ctx, p
         return withContext(Dispatchers.IO) {
             delay(DELAY_TIME_MILLIS)
             return@withContext try {
-            require(!resourceUri.isNullOrBlank()) {
-                val errorMessage = applicationContext.resources.getString(R.string.invalid_input_uri)
-                Log.e(TAG, errorMessage)
-                errorMessage
-            }
+                require(!resourceUri.isNullOrBlank()) {
+                    val errorMessage =
+                        applicationContext.resources.getString(R.string.invalid_input_uri)
+                    Log.e(TAG, errorMessage)
+                    errorMessage
+                }
                 val resolver = applicationContext.contentResolver
 
                 val picture = BitmapFactory.decodeStream(
