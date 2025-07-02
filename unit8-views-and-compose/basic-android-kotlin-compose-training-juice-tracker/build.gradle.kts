@@ -28,4 +28,5 @@ plugins {
     id("com.android.library") version "8.11.0" apply false
     id("org.jetbrains.kotlin.android") version "2.2.0" apply false
     id("androidx.navigation.safeargs") version "2.9.0" apply false
+    id("org.jetbrains.kotlin.plugin.compose") version "2.1.0" apply false
 }
